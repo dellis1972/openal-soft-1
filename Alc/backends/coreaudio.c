@@ -28,10 +28,16 @@
 #include "alu.h"
 #include "ringbuffer.h"
 
-#include <CoreServices/CoreServices.h>
-#include <unistd.h>
-#include <AudioUnit/AudioUnit.h>
 #include <AudioToolbox/AudioToolbox.h>
+#include <AudioToolbox/AudioServices.h>
+#include <CoreFoundation/CoreFoundation.h>
+
+typedef AudioComponent Component;
+typedef AudioComponentDescription ComponentDescription;
+
+#define OpenAComponent      AudioComponentInstanceNew
+#define FindNextComponent   AudioComponentFindNext
+#define CloseComponent      AudioComponentInstanceDispose
 
 #include "backends/base.h"
 
@@ -159,7 +165,11 @@ static ALCenum ALCcoreAudioPlayback_open(ALCcoreAudioPlayback *self, const ALCch
 
     /* open the default output unit */
     desc.componentType = kAudioUnitType_Output;
+#if TARGET_OS_IPHONE
+    desc.componentSubType = kAudioUnitSubType_RemoteIO;
+#else
     desc.componentSubType = kAudioUnitSubType_DefaultOutput;
+#endif // TARGET_OS_IPHONE
     desc.componentManufacturer = kAudioUnitManufacturer_Apple;
     desc.componentFlags = 0;
     desc.componentFlagsMask = 0;
@@ -449,6 +459,7 @@ static OSStatus ALCcoreAudioCapture_ConvertCallback(AudioConverterRef UNUSED(inA
 
 static ALCenum ALCcoreAudioCapture_open(ALCcoreAudioCapture *self, const ALCchar *name)
 {
+#if !TARGET_OS_IPHONE
     ALCdevice *device = STATIC_CAST(ALCbackend,self)->mDevice;
     AudioStreamBasicDescription requestedFormat;  // The application requested format
     AudioStreamBasicDescription hardwareFormat;   // The hardware format
@@ -469,7 +480,11 @@ static ALCenum ALCcoreAudioCapture_open(ALCcoreAudioCapture *self, const ALCchar
         return ALC_INVALID_VALUE;
 
     desc.componentType = kAudioUnitType_Output;
+#if TARGET_OS_IPHONE
+    desc.componentSubType = kAudioUnitSubType_RemoteIO;
+#else
     desc.componentSubType = kAudioUnitSubType_HALOutput;
+#endif // TARGET_OS_IPHONE
     desc.componentManufacturer = kAudioUnitManufacturer_Apple;
     desc.componentFlags = 0;
     desc.componentFlagsMask = 0;
@@ -682,7 +697,7 @@ error:
         AudioConverterDispose(self->audioConverter);
     if(self->audioUnit)
         AudioComponentInstanceDispose(self->audioUnit);
-
+#endif
     return ALC_INVALID_VALUE;
 }
 
