@@ -1,5 +1,6 @@
 #!/bin/bash
 cd build
+rm -Rf *
 mkdir armv7
 mkdir armv7s
 mkdir arm64

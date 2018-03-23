@@ -60,7 +60,7 @@ script:
         .
     fi
   - >
-    if [[ "${TRAVIS_OS_NAME}" == "osx" && -z "${BUILD_MOBILE}" ]]; then
+    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       cmake \
         -DALSOFT_REQUIRE_COREAUDIO=ON \
         -DALSOFT_EMBED_HRTF_DATA=YES \
