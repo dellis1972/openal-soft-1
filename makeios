@@ -29,9 +29,9 @@ cd ../tvossim
 cmake -DALSOFT_REQUIRE_COREAUDIO=ON -DALSOFT_EMBED_HRTF_DATA=YES -DCMAKE_TOOLCHAIN_FILE=../../toolchains/ios.cmake -DIOS_PLATFORM=SIMULATOR_TVOS -DENABLE_BITCODE=0 ../..
 make -j2
 cd ..
-mkdir iOS/OpenALSoft.framework
+mkdir -p iOS/OpenALSoft.framework
 lipo armv7/libopenal.1.18.dylib armv7s/libopenal.1.18.dylib arm64/libopenal.1.18.dylib i386/libopenal.1.18.dylib x86_64/libopenal.1.18.dylib -output iOS/OpenALSoft.framework/OpenALSoft -create
 cp ../iOSInfo.plist iOS/OpenALSoft.framewkr/Info.plist
-mkdir tvOS/OpenALSoft.framework
+mkdir -p tvOS/OpenALSoft.framework
 lipo tvos/libopenal.1.18.dylib tvossim/libopenal.1.18.dylib -output tvOS/OpenALSoft.framework/OpenALSoft -create
 cp ../tvOSInfo.plist tvOS/OpenALSoft.framewkr/Info.plist
