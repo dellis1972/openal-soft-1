@@ -1,0 +1,28 @@
+#!/bin/bash
+cd build
+mkdir armv7
+mkdir armv7s
+mkdir arm64
+mkdir i386
+mkdir x86_64
+cd armv7
+cmake -DALSOFT_REQUIRE_COREAUDIO=ON -DALSOFT_EMBED_HRTF_DATA=YES -DCMAKE_TOOLCHAIN_FILE=../../toolchains/ios.cmake -DIOS_PLATFORM=OS -DENABLE_BITCODE=0 -DIOS_ARCH=armv7 ../..
+make -j2
+cd ../armv7s
+cmake -DALSOFT_REQUIRE_COREAUDIO=ON -DALSOFT_EMBED_HRTF_DATA=YES -DCMAKE_TOOLCHAIN_FILE=../../toolchains/ios.cmake -DIOS_PLATFORM=OS -DENABLE_BITCODE=0 -DIOS_ARCH=armv7s ../..
+make -j2
+cd ../armv64
+cmake -DALSOFT_REQUIRE_COREAUDIO=ON -DALSOFT_EMBED_HRTF_DATA=YES -DCMAKE_TOOLCHAIN_FILE=../../toolchains/ios.cmake -DIOS_PLATFORM=OS -DENABLE_BITCODE=0 -DIOS_ARCH=armv64 ../..
+make -j2
+cd ../i386
+cmake -DALSOFT_REQUIRE_COREAUDIO=ON -DALSOFT_EMBED_HRTF_DATA=YES -DCMAKE_TOOLCHAIN_FILE=../../toolchains/ios.cmake -DIOS_PLATFORM=SIMULATOR -DENABLE_BITCODE=0 ../..
+make -j2
+cd ../x86_64
+cmake -DALSOFT_REQUIRE_COREAUDIO=ON -DALSOFT_EMBED_HRTF_DATA=YES -DCMAKE_TOOLCHAIN_FILE=../../toolchains/ios.cmake -DIOS_PLATFORM=SIMULATOR64 -DENABLE_BITCODE=0 ../..
+make -j2
+cd ..
+lipo armv7/libopenal.1.18.dylib armv7s/libopenal.1.18.dylib arm64/libopenal.1.18.dylib i386/libopenal.1.18.dylib x86_64/libopenal.1.18.dylib -output OpenALSoft -create
+rm -Rf OpenALSoft.framework
+mkdir OpenALSoft.framework
+cp OpenALSoft OpenALSoft.framework/OpenALSoft
+cp ../iOSInfo.plist OpenALSoft.framewkr/Info.plist
