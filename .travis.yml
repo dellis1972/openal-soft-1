@@ -8,6 +8,9 @@ matrix:
       env:
         - BUILD_ANDROID=true
     - os: osx
+    - os: osx
+      env:
+        - BUILD_MOBILE=true
 sudo: required
 install:
   - >
@@ -57,11 +60,11 @@ script:
         .
     fi
   - >
-    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+    if [[ "${TRAVIS_OS_NAME}" == "osx" && -z "${BUILD_MOBILE}" ]]; then
       cmake \
         -DALSOFT_REQUIRE_COREAUDIO=ON \
         -DALSOFT_EMBED_HRTF_DATA=YES \
         .
     fi
   - make -j2
-  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then ./makeios ; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" && "${BUILD_MOBILE}" == "true" ]]; then ./makeios ; fi
